@@ -13,7 +13,6 @@ class PostStructure {
   final int commentCount;
   final String type;
   final String url;
-  final String domain;
 
   PostStructure(
       {this.id,
@@ -24,21 +23,20 @@ class PostStructure {
       this.timeAgo,
       this.commentCount,
       this.type,
-      this.url,
-      this.domain});
+      this.url
+      });
 
   factory PostStructure.fromJson(Map<String, dynamic> json) {
     return PostStructure(
-        id: json['id'],
-        title: json['title'],
-        points: json['points'],
-        user: json['user'],
-        time: json['time'],
-        timeAgo: json['time_ago'],
-        commentCount: json['comment_count'],
-        type: json['type'],
-        url: json['url'],
-        domain: json['domain']);
+        id: json['id'] ?? 0,
+        title: json['title'] ?? "",
+        points: json['points'] ?? 0,
+        user: json['user'] ?? "",
+        time: json['time'] ?? 0,
+        timeAgo: json['time_ago'] ?? "",
+        commentCount: json['comment_count'] ?? 0,
+        type: json['type'] ?? "",
+        url: json['url'],) ?? "";
   }
 }
 
@@ -73,6 +71,7 @@ class MainFetchData extends StatefulWidget {
 class _MainFetchState extends State<MainFetchData> {
   PostListStucture posts = PostListStucture(posts: []);
   var isLoading = false;
+
 
   _fetchData() {
     setState(() {
@@ -120,7 +119,7 @@ class _MainFetchState extends State<MainFetchData> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      throw Exception("Can't open url " + url);
+      print("Can't open url " + url);
     }
   }
 
@@ -142,11 +141,7 @@ class _MainFetchState extends State<MainFetchData> {
               itemBuilder: (BuildContext context, int index) => ListTile(
                 contentPadding: EdgeInsets.all(5.0),
                 title: Text(allPosts[index].title.toString()),
-                subtitle: Text("By: " +
-                    allPosts[index].user +
-                    ", " +
-                    allPosts[index].commentCount.toString() +
-                    " comments"),
+                subtitle:Text("By:"+allPosts[index].user),
                 leading: Text("${index + 1}"),
                 trailing: Icon(Icons.open_in_new),
                 onTap: () => _launchURL(allPosts[index].url),
