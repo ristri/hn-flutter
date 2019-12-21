@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
-import 'main-fetch-data.dart';
 
 class Resource<T> {
   final String url;

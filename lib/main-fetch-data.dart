@@ -70,7 +70,7 @@ class MainFetchData extends StatefulWidget {
 
 class _MainFetchState extends State<MainFetchData> {
   PostListStucture posts = PostListStucture(posts: []);
-  var isLoading = false;
+  bool isLoading = false;
 
 
   _fetchData() {
