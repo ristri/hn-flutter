@@ -2,46 +2,6 @@ import 'package:flutter/material.dart';
 import 'webservice.dart';
 import 'dart:convert';
 
-class Item extends StatefulWidget {
-  Item({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _ItemState createState() => _ItemState();
-}
-
-class _ItemState extends State<Item> {
-  ItemStructure _item;
-  @override
-  void initState() {
-    super.initState();
-    _populateItem();
-  }
-
-  void _populateItem() {
-    Webservice().load(ItemStructure.all).then((item) => {
-          // setState(() => {_item = item})
-          print(item.title)
-        });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Text("_item.title");
-  }
-}
-
 class ItemStructure {
   final String by;
   final String title;
@@ -80,5 +40,39 @@ class ItemStructure {
           final result = jsonDecode(response.body);
           return ItemStructure.fromJson(result);
         });
+  }
+}
+
+class Item extends StatefulWidget {
+  final String title;
+
+  Item({Key key, this.title}) : super(key: key);
+
+  @override
+  _ItemState createState() => _ItemState();
+}
+
+class _ItemState extends State<Item> {
+  ItemStructure _item;
+  @override
+  void initState() {
+    super.initState();
+    _populateItem();
+  }
+
+  void _populateItem() {
+    Webservice()
+        .load(ItemStructure.all)
+        .then((item) => {
+              // setState(() => {_item = item})
+              print(item.title)
+            })
+        .catchError((err) => print(err.toString()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Text("_item.title");
   }
 }
