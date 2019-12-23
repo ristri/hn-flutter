@@ -3,27 +3,29 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewContainer extends StatefulWidget {
   final String url;
-  WebViewContainer({this.url});
+  final String title;
+  WebViewContainer({this.url, this.title});
   @override
-  State<StatefulWidget> createState() => _WebViewContainerState(this.url);
+  State<StatefulWidget> createState() => _WebViewContainerState(this.url, this.title);
 }
 
 class _WebViewContainerState extends State {
   var _url;
+  var _title;
   final _key = UniqueKey();
 
-  _WebViewContainerState(this._url);
+  _WebViewContainerState(this._url, this._title);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("web view Route"),
+        title: Text(_title),
       ),
       body: Column(
         children: <Widget>[
           Expanded(
-            child: WebView( 
+            child: WebView(
               key: _key,
               initialUrl: _url,
               javascriptMode: JavascriptMode.unrestricted,
