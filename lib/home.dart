@@ -54,7 +54,7 @@ class PostListStucture {
         url: "https://api.hackerwebapp.com/news?page=1",
         parse: (response) {
           final result = jsonDecode(response.body);
-          debugPrint(result.toString());
+          // debugPrint(result.toString());
           return PostListStucture.fromJson(List.from(result));
         });
   }
@@ -83,12 +83,13 @@ class _HomeState extends State<Home> {
         });
   }
 
-  _launchURL(BuildContext context, String url)  {
+  _launchURL(BuildContext context, String url, String title) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => WebViewContainer(
                   url: url,
+                  title: title,
                 )));
     // if (await canLaunch(url)) {
     //   await launch(url);
@@ -119,13 +120,15 @@ class _HomeState extends State<Home> {
                 leading: Text("${index + 1}"),
                 trailing: InkResponse(
                   child: Icon(Icons.open_in_new),
-                  onTap: () => _launchURL(context, allPosts[index].url),
+                  onTap: () => _launchURL(
+                      context, allPosts[index].url, allPosts[index].title),
                 ),
-                onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Item(id:allPosts[index].id))),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Item(id: allPosts[index].id))),
               ),
             ),
     );
   }
 }
-

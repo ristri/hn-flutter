@@ -69,8 +69,8 @@ class ItemStructure {
         id: json['id'] ?? 0,
         points: json['points'] ?? 0,
         time: json['time'] ?? 0,
-        comments: json['comment'] != null
-            ? (json['comment'] as List)
+        comments: json['comments'] != null
+            ? (json['comments'] as List)
                 .map((comment) => CommentStructure.fromJson(comment))
                 .toList()
             : []);
@@ -78,10 +78,10 @@ class ItemStructure {
 
   static Resource<ItemStructure> all(int id) {
     return Resource(
-        url: "https://api.hackerwebapp.com/item/"+id.toString(),
+        url: "https://api.hackerwebapp.com/item/" + id.toString(),
         parse: (response) {
           final result = jsonDecode(response.body);
-          debugPrint(result.toString());
+          // debugPrint(result.toString());
           return ItemStructure.fromJson(result);
         });
   }
@@ -91,7 +91,7 @@ class Item extends StatefulWidget {
   final String title;
   final int id;
 
-  Item({Key key, this.title,this.id}) : super(key: key);
+  Item({Key key, this.title, this.id}) : super(key: key);
 
   @override
   _ItemState createState() => _ItemState();
@@ -107,7 +107,8 @@ class _ItemState extends State<Item> {
   }
 
   Widget _buildComments(List<CommentStructure> parentComments) {
-    return Expanded(
+    return Container(
+      height: 100,
       child: ListView.builder(
         itemCount: parentComments.length,
         itemBuilder: (BuildContext ctxt, int index) {
