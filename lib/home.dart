@@ -126,7 +126,7 @@ class _HomeState extends State<Home> {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Item(id: allPosts[index].id))),
+                        builder: (context) => Item(id: allPosts[index].id,title: allPosts[index].title,))),
               ),
             ),
     );

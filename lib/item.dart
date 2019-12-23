@@ -139,7 +139,7 @@ class _ItemState extends State<Item> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_item.title),
+        title: Text(widget.title),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
