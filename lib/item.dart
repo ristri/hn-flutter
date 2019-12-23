@@ -29,7 +29,8 @@ class CommentStructure {
         content: json['content'] ?? "",
         comments: json['comment'] != null
             ? (json['comment'] as List)
-                .map((comment) => CommentStructure.fromJson(comment)).toList()
+                .map((comment) => CommentStructure.fromJson(comment))
+                .toList()
             : []);
   }
 }
@@ -70,7 +71,8 @@ class ItemStructure {
         time: json['time'] ?? 0,
         comments: json['comment'] != null
             ? (json['comment'] as List)
-                .map((comment) => CommentStructure.fromJson(comment)).toList()
+                .map((comment) => CommentStructure.fromJson(comment))
+                .toList()
             : []);
   }
 
@@ -79,6 +81,7 @@ class ItemStructure {
         url: "https://api.hackerwebapp.com/item/21851020",
         parse: (response) {
           final result = jsonDecode(response.body);
+          debugPrint(result.toString());
           return ItemStructure.fromJson(result);
         });
   }
@@ -103,7 +106,6 @@ class _ItemState extends State<Item> {
   }
 
   Widget _buildComments(List<CommentStructure> parentComments) {
-    print(parentComments.length);
     return Expanded(
       child: ListView.builder(
         itemCount: parentComments.length,
@@ -145,7 +147,7 @@ class _ItemState extends State<Item> {
                 children: <Widget>[
                   Text(_item.title),
                   Html(data: _item.content),
-                   _buildComments(_item.comments)
+                  _buildComments(_item.comments)
                 ],
               ),
             ),
