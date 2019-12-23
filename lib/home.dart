@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'web-view.dart';
 import 'webservice.dart';
 
 class PostStructure {
@@ -23,20 +25,21 @@ class PostStructure {
       this.timeAgo,
       this.commentCount,
       this.type,
-      this.url
-      });
+      this.url});
 
   factory PostStructure.fromJson(Map<String, dynamic> json) {
     return PostStructure(
-        id: json['id'] ?? 0,
-        title: json['title'] ?? "",
-        points: json['points'] ?? 0,
-        user: json['user'] ?? "",
-        time: json['time'] ?? 0,
-        timeAgo: json['time_ago'] ?? "",
-        commentCount: json['comment_count'] ?? 0,
-        type: json['type'] ?? "",
-        url: json['url'],) ?? "";
+          id: json['id'] ?? 0,
+          title: json['title'] ?? "",
+          points: json['points'] ?? 0,
+          user: json['user'] ?? "",
+          time: json['time'] ?? 0,
+          timeAgo: json['time_ago'] ?? "",
+          commentCount: json['comment_count'] ?? 0,
+          type: json['type'] ?? "",
+          url: json['url'],
+        ) ??
+        "";
   }
 }
 
@@ -44,11 +47,6 @@ class PostListStucture {
   final List<PostStructure> posts;
   PostListStucture({this.posts});
   factory PostListStucture.fromJson(List<Map<String, dynamic>> json) {
-    // List<PostStructure> tempPosts = [];
-    // json.forEach((post) => {
-    //       tempPosts = [...tempPosts, PostStructure.fromJson(post)]
-    //     });
-    // return PostListStucture(posts: tempPosts);
     return PostListStucture(
         posts: (json).map((post) => PostStructure.fromJson(post)).toList());
   }
@@ -63,15 +61,14 @@ class PostListStucture {
   }
 }
 
-class MainFetchData extends StatefulWidget {
+class Home extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _MainFetchState();
+  State<StatefulWidget> createState() => _HomeState();
 }
 
-class _MainFetchState extends State<MainFetchData> {
+class _HomeState extends State<Home> {
   PostListStucture posts = PostListStucture(posts: []);
   bool isLoading = false;
-
 
   _fetchData() {
     setState(() {
@@ -85,42 +82,20 @@ class _MainFetchState extends State<MainFetchData> {
           print(err.toString())
           // throw Exception(err)
         });
-
-    // var response =
-    //     await http.get("https://hacker-news.firebaseio.com/v0/topstories.json");
-    // if (response.statusCode == 200) {
-    //   list = List.from(jsonDecode(response.body)).sublist(0, 9);
-    //   debugPrint(list.toString());
-    //   for (var postId in list) {
-    //     debugPrint(postId.toString());
-    //     response = await http
-    //         .get("https://hacker-news.firebaseio.com/v0/item/$postId.json");
-    //     if (response.statusCode == 200) {
-    //       Map post = jsonDecode(response.body);
-    //       debugPrint(post.toString());
-    //       posts = [...posts, post];
-    //     }
-    //     // Display items as they are loaded one by one
-    //     // setState(() {
-    //     //   isLoading = false;
-    //     // });
-    //   }
-    //   debugPrint(posts.toString());
-    //   // final data = await http.get("https://hacker-news.firebaseio.com/v0/item/8863.json");
-    //   setState(() {
-    //     isLoading = false;
-    //   });
-    // } else {
-    //   throw Exception("Failed to load photos");
-    // }
   }
 
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      print("Can't open url " + url);
-    }
+  _launchURL(BuildContext context, String url) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WebViewContainer(
+                  url: url,
+                )));
+    // if (await canLaunch(url)) {
+    //   await launch(url);
+    // } else {
+    //   print("Can't open url " + url);
+    // }
   }
 
   @override
@@ -141,12 +116,28 @@ class _MainFetchState extends State<MainFetchData> {
               itemBuilder: (BuildContext context, int index) => ListTile(
                 contentPadding: EdgeInsets.all(5.0),
                 title: Text(allPosts[index].title.toString()),
-                subtitle:Text("By:"+allPosts[index].user),
+                subtitle: Text("By:" + allPosts[index].user),
                 leading: Text("${index + 1}"),
-                trailing: Icon(Icons.open_in_new),
-                onTap: () => _launchURL(allPosts[index].url),
+                trailing: InkResponse(
+                  child: Icon(Icons.open_in_new),
+                  onTap: () => _launchURL(context, allPosts[index].url),
+                ),
+                onTap: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => SecondRoute())),
               ),
             ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
+      body: Center(child: Text("Second route screen")),
     );
   }
 }
