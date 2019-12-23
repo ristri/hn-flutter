@@ -76,9 +76,9 @@ class ItemStructure {
             : []);
   }
 
-  static Resource<ItemStructure> get all {
+  static Resource<ItemStructure> all(int id) {
     return Resource(
-        url: "https://api.hackerwebapp.com/item/21851020",
+        url: "https://api.hackerwebapp.com/item/"+id.toString(),
         parse: (response) {
           final result = jsonDecode(response.body);
           debugPrint(result.toString());
@@ -89,8 +89,9 @@ class ItemStructure {
 
 class Item extends StatefulWidget {
   final String title;
+  final int id;
 
-  Item({Key key, this.title}) : super(key: key);
+  Item({Key key, this.title,this.id}) : super(key: key);
 
   @override
   _ItemState createState() => _ItemState();
@@ -126,7 +127,7 @@ class _ItemState extends State<Item> {
       isLoading = true;
     });
     Webservice()
-        .load(ItemStructure.all)
+        .load(ItemStructure.all(widget.id))
         .then((item) => {
               setState(() => {_item = item, isLoading = false})
             })

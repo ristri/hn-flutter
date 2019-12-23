@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'web-view.dart';
 import 'webservice.dart';
+import 'item.dart';
 
 class PostStructure {
   final int id;
@@ -84,7 +83,7 @@ class _HomeState extends State<Home> {
         });
   }
 
-  _launchURL(BuildContext context, String url) async {
+  _launchURL(BuildContext context, String url)  {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -123,21 +122,10 @@ class _HomeState extends State<Home> {
                   onTap: () => _launchURL(context, allPosts[index].url),
                 ),
                 onTap: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => SecondRoute())),
+                    MaterialPageRoute(builder: (context) => Item(id:allPosts[index].id))),
               ),
             ),
     );
   }
 }
 
-class SecondRoute extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Second Route"),
-      ),
-      body: Center(child: Text("Second route screen")),
-    );
-  }
-}
