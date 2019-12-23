@@ -116,7 +116,7 @@ class _HomeState extends State<Home> {
               itemBuilder: (BuildContext context, int index) => ListTile(
                 contentPadding: EdgeInsets.all(5.0),
                 title: Text(allPosts[index].title.toString()),
-                subtitle: Text("By:" + allPosts[index].user),
+                subtitle: Text("By: " + allPosts[index].user),
                 leading: Text("${index + 1}"),
                 trailing: InkResponse(
                   child: Icon(Icons.open_in_new),
