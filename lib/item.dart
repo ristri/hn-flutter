@@ -27,8 +27,8 @@ class CommentStructure {
         time: json['time'] ?? 0,
         timeAgo: json['time_ago'] ?? "",
         content: json['content'] ?? "",
-        comments: json['comment'] != null
-            ? (json['comment'] as List)
+        comments: json['comments'] != null
+            ? (json['comments'] as List)
                 .map((comment) => CommentStructure.fromJson(comment))
                 .toList()
             : []);
@@ -107,6 +107,7 @@ class _ItemState extends State<Item> {
   }
 
   Widget _buildComments(List<CommentStructure> parentComments) {
+    if (parentComments.length == 0) return Container();
     return Container(
       height: 100,
       child: ListView.builder(
@@ -149,7 +150,7 @@ class _ItemState extends State<Item> {
                 children: <Widget>[
                   Text(_item.title),
                   Html(data: _item.content),
-                  _buildComments(_item.comments)
+                  Expanded(child: _buildComments(_item.comments))
                 ],
               ),
             ),
