@@ -43,15 +43,15 @@ class PostStructure {
 }
 
 class PostListStucture {
-  final List<PostStructure> posts;
+  List<PostStructure> posts;
   PostListStucture({this.posts});
   factory PostListStucture.fromJson(List<Map<String, dynamic>> json) {
     return PostListStucture(
         posts: (json).map((post) => PostStructure.fromJson(post)).toList());
   }
-  static Resource<PostListStucture> get all {
+  static Resource<PostListStucture> all(int page) {
     return Resource(
-        url: "https://api.hackerwebapp.com/news?page=1",
+        url: "https://api.hackerwebapp.com/news?page=$page",
         parse: (response) {
           final result = jsonDecode(response.body);
           // debugPrint(result.toString());
@@ -68,14 +68,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   PostListStucture posts = PostListStucture(posts: []);
   bool isLoading = false;
+  ScrollController _controller;
+  int page = 1;
 
-  _fetchData() {
+  _fetchData(int page) {
     setState(() {
       isLoading = true;
     });
 
-    Webservice().load(PostListStucture.all).then((PostListStucture list) {
-      posts = list;
+    Webservice().load(PostListStucture.all(page)).then((PostListStucture list) {
+      posts.posts = [...posts.posts, ...list.posts];
       setState(() => {isLoading = false});
     }).catchError((err) => {
           print(err.toString())
@@ -91,17 +93,23 @@ class _HomeState extends State<Home> {
                   url: url,
                   title: title,
                 )));
-    // if (await canLaunch(url)) {
-    //   await launch(url);
-    // } else {
-    //   print("Can't open url " + url);
-    // }
+  }
+
+  _scrollListener() {
+    if (_controller.offset >= _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      debugPrint("reached at end of list view");
+      this.page++;
+      _fetchData(this.page);
+    }
   }
 
   @override
   void initState() {
+    _controller = ScrollController();
+    _controller.addListener(_scrollListener);
     super.initState();
-    _fetchData();
+    _fetchData(this.page);
   }
 
   @override
@@ -113,6 +121,7 @@ class _HomeState extends State<Home> {
           ? Center(child: CircularProgressIndicator())
           : ListView.builder(
               itemCount: allPosts.length,
+              controller: _controller,
               itemBuilder: (BuildContext context, int index) => ListTile(
                 contentPadding: EdgeInsets.all(5.0),
                 title: Text(allPosts[index].title.toString()),
@@ -126,7 +135,10 @@ class _HomeState extends State<Home> {
                 onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Item(id: allPosts[index].id,title: allPosts[index].title,))),
+                        builder: (context) => Item(
+                              id: allPosts[index].id,
+                              title: allPosts[index].title,
+                            ))),
               ),
             ),
     );
