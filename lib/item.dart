@@ -109,13 +109,21 @@ class _ItemState extends State<Item> {
   Widget _buildComments(List<CommentStructure> parentComments) {
     if (parentComments.length == 0) return Container();
     return Container(
-      height: 100,
       child: ListView.builder(
         itemCount: parentComments.length,
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
         itemBuilder: (BuildContext ctxt, int index) {
           return Column(
             children: <Widget>[
-              Html(data: parentComments[index].content),
+              Padding(
+                padding:
+                    EdgeInsets.only(left: 12.0 * parentComments[index].level),
+                child: Container(
+                  child: Html(data: parentComments[index].content),
+                  decoration: BoxDecoration(border: Border.all()),
+                ),
+              ),
               _buildComments(parentComments[index].comments)
             ],
           );
