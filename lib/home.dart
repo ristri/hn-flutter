@@ -68,17 +68,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   PostListStucture posts = PostListStucture(posts: []);
   bool isLoading = false;
+  bool pageLoading = false;
   ScrollController _controller;
   int page = 1;
 
   _fetchData(int page) {
     setState(() {
-      isLoading = true;
+      page == 1 ? isLoading = true : pageLoading = true;
     });
 
     Webservice().load(PostListStucture.all(page)).then((PostListStucture list) {
       posts.posts = [...posts.posts, ...list.posts];
-      setState(() => {isLoading = false});
+      setState(() => {isLoading = false, pageLoading = false});
     }).catchError((err) => {
           print(err.toString())
           // throw Exception(err)
@@ -119,27 +120,34 @@ class _HomeState extends State<Home> {
       appBar: AppBar(title: Text("HackerNews")),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: allPosts.length,
-              controller: _controller,
-              itemBuilder: (BuildContext context, int index) => ListTile(
-                contentPadding: EdgeInsets.all(5.0),
-                title: Text(allPosts[index].title.toString()),
-                subtitle: Text("By: " + allPosts[index].user),
-                leading: Text("${index + 1}"),
-                trailing: InkResponse(
-                  child: Icon(Icons.open_in_new),
-                  onTap: () => _launchURL(
-                      context, allPosts[index].url, allPosts[index].title),
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: allPosts.length,
+                    controller: _controller,
+                    itemBuilder: (BuildContext context, int index) => ListTile(
+                      contentPadding: EdgeInsets.all(5.0),
+                      title: Text(allPosts[index].title.toString()),
+                      subtitle: Text("By: " + allPosts[index].user),
+                      leading: Text("${index + 1}"),
+                      trailing: InkResponse(
+                        child: Icon(Icons.open_in_new),
+                        onTap: () => _launchURL(context, allPosts[index].url,
+                            allPosts[index].title),
+                      ),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Item(
+                                    id: allPosts[index].id,
+                                    title: allPosts[index].title,
+                                  ))),
+                    ),
+                  ),
                 ),
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Item(
-                              id: allPosts[index].id,
-                              title: allPosts[index].title,
-                            ))),
-              ),
+                pageLoading?CircularProgressIndicator():Container()
+              ],
             ),
     );
   }
